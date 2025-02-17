@@ -1,0 +1,34 @@
+trigger: none 
+
+pool: CTS 
+
+stages: 
+- stage: build
+  displayName: terraforminitandplan
+  jobs: 
+  - job: init
+    steps:
+    - step: 
+    - task: TerraformTaskV4@4
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/Cognizantpractice/environment'
+        backendServiceArm: 'DevOps'
+        backendAzureRmResourceGroupName: 'backend-rg'
+        backendAzureRmStorageAccountName: 'backendstore26'
+        backendAzureRmContainerName: 'backendcontainer'
+        backendAzureRmKey: 'terraform.tfvars'
+    
+    - task: TerraformTaskV4@4
+      inputs:
+        provider: 'azurerm'
+        command: 'validate'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/Cognizantpractice/environment'
+
+    - task: tfsec@1
+      inputs:
+      version: 'v1.26.0'
+      dir: 'Cognizantpractice'
+
+    
